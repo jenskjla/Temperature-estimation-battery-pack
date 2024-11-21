@@ -1,0 +1,10 @@
+------------------------------------------------------------------------data generation----------------------------------------------------------------------
+Run dataset_generation_7packs_newParam.m
+The heat generation model of each battery is a simple I2Re model
+
+------------------------------------------------------------------------temperature estimation--------------------------------------------------------------
+-Run main_7bat.py
+-Fundamental of Kalman filter, please see 
+---https://web.mit.edu/kirtley/kirtley/binlustuff/literature/control/Kalman%20filter.pdf
+---https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/
+-Use extended Kalman Filter to realize simultaneous parameter and state estimation, please refer to "State_and_parameter_estimation_in_induction_motor_using_the_Extended_Kalman_Filtering_algorithm"
