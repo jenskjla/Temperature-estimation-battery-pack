@@ -23,6 +23,7 @@ nRe4 = 1 * 1e-1 * 0.9
 nRe5 = 1 * 1e-1 * 0.85
 nRe6 = 1 * 1e-1 * 1.1
 nRe7 = 1 * 1e-1 * 1.0
+nRe = [nRe1, nRe2, nRe3, nRe4, nRe5, nRe6, nRe7 ]
 df = pd.read_csv("./thermal model/Simulation_data/Q_values.csv")
 starttime = 1
 endtime = 25001
@@ -252,7 +253,7 @@ def jacobian_motion_model(x_k_1, ISquare, delta_t, Qv, k):
     return F, L 
 
 
-def data_initialization(QState, QParam, RState, PState, PParam, Qv):
+def data_initialization(QState, QParam, RState, PState, PParam):
 
     Cc_init = nCc * 1.1
     Cs_init = nCs * 0.9
@@ -277,10 +278,10 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
     for i in range(len(data_t)):
         tmp = []
         for n in range(num):
-            tmp.append([Qv[i,n]])
+            Re = nRe[n]
+            tmp.append([data_ib[i]**2*Re])
             tmp.append([Ta])
         Control.append(np.array(tmp))
-    
 
     Q = np.diag([QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QParam, QParam, QParam, QParam, QParam])  # Intializing Process Noise Co-Variance Matrix
     R = np.diag([RState, RState, RState, RState]) # Intializing Measurement Noise Co-Variance Matrix
@@ -307,7 +308,7 @@ if __name__ == '__main__':
     Ap = ""
     ekf = EKF_Estimation.EKF() # EKF Object
 
-    controls, t, Q, R, x_est, P_est, States_True = data_initialization(QState, QParam, RState, PState, PParam, Qv)
+    controls, t, Q, R, x_est, P_est, States_True= data_initialization(QState, QParam, RState, PState, PParam)
 
     x_k_1 = x_est[0,:].reshape(-1,1)
     P_k_1 = P_est[0]
@@ -319,7 +320,7 @@ if __name__ == '__main__':
         delta_t = t[k] - t[k-1] # Time Period
 
         # Prediction Step
-        x_k_1,P_k_1 = ekf.prediction_step(delta_t,controls[k],x_k_1,P_k_1,Q,jacobian_motion_model,motion_model, Qv, k)
+        x_k_1,P_k_1= ekf.prediction_step(delta_t,controls[k],x_k_1,P_k_1,Q,jacobian_motion_model,motion_model, Qv, k)
 
         x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts1", "Ts2", "Ts5", "Ts7"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
         if Breakflag:
