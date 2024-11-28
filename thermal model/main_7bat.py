@@ -303,10 +303,11 @@ if __name__ == '__main__':
     PParam = [5e-1]
 
     for i in range(15):
-        QState.append(QState*1e-1)
-        QParam.append(QState*1e-1)
-        PState.append(QState*1e-1)
-        PParam.append(QState*1e-1)
+        QState.append(QState[i]*1e-1)
+        QParam.append(QParam[i]*1e-1)
+        RState.append(RState[i]*1e-1)
+        PState.append(PState[i]*1e-1)
+        PParam.append(PParam[i]*1e-1)
     train = 1
     print("START")
     Breakflag = False
