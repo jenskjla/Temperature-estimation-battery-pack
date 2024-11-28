@@ -296,18 +296,24 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
 
 if __name__ == '__main__':
 
-    QState = 1e-8
-    QParam = 1e-10 #Higher -> Trusts more in model
-    RState = 1e-8
-    PState = 1e-6
-    PParam = 5e-6
+    QState = [1e-1]
+    QParam = [1e-1] #Higher -> Trusts more in model
+    RState = [1e-1]
+    PState = [1e-1]
+    PParam = [5e-1]
 
+    for i in range(15):
+        QState.append(QState*1e-1)
+        QParam.append(QState*1e-1)
+        PState.append(QState*1e-1)
+        PParam.append(QState*1e-1)
+    train = 1
     print("START")
     Breakflag = False
     Ap = ""
     ekf = EKF_Estimation.EKF() # EKF Object
 
-    controls, t, Q, R, x_est, P_est, States_True = data_initialization(QState, QParam, RState, PState, PParam, Qv)
+    controls, t, Q, R, x_est, P_est, States_True = data_initialization(QState[train], QParam[train], RState[train], PState[train], PParam[train], Qv)
 
     x_k_1 = x_est[0,:].reshape(-1,1)
     P_k_1 = P_est[0]
@@ -489,11 +495,11 @@ if __name__ == '__main__':
         # plt.plot(t, Tc2_pred)  # Tc1
         # plt.plot(t, Tc2_true)
         # plt.show()
-    NAME = './thermal model/outptKF/Pcontinue_QState' + "{:.0e}".format(QState)  \
-          + "QParam" + "{:.0e}".format(QParam) \
-            + "RState" + "{:.0e}".format(RState) \
-            + "PState" + "{:.0e}".format(PState) \
-            + "RParam" + "{:.0e}".format(PParam) + '.txt'
+    NAME = './thermal model/outptKF/Pcontinue_QState' + "{:.0e}".format(QState[train])  \
+          + "QParam" + "{:.0e}".format(QParam[train]) \
+            + "RState" + "{:.0e}".format(RState[train]) \
+            + "PState" + "{:.0e}".format(PState[train]) \
+            + "RParam" + "{:.0e}".format(PParam[train]) + '.txt'
     with open(NAME, 'w') as f:  # 设置文件对象
         f.write(Ap)
 
