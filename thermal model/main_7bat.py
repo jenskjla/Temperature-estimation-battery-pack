@@ -271,7 +271,7 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
     States_True = dataframe[["Tc1", "Ts1", "Tc2", "Ts2", "Tc3", "Ts3", "Tc4", "Ts4", "Tc5", "Ts5", "Tc6", "Ts6", "Tc7", "Ts7"]]
 
     state_init = np.array([[Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Cc_init, Cs_init, Rc_init, Ru_init, Rcc_init]])
-    ibSquare = data_ib.reshape(1, -1) * data_ib.reshape(1, -1)
+    #ibSquare = data_ib.reshape(1, -1) * data_ib.reshape(1, -1)
     Control = []
     num = 7
     for i in range(len(data_t)):
@@ -297,7 +297,7 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
 if __name__ == '__main__':
 
     QState = 1e-8
-    QParam = 1e-10
+    QParam = 1e-10 #Higher -> Trusts more in model
     RState = 1e-8
     PState = 1e-6
     PParam = 5e-6
