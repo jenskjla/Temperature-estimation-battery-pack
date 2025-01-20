@@ -21,7 +21,7 @@ B2 = A(15/T+1:end);
 i_battery = B1 - B2;
 [~, len] = size(i_battery);
 x = x(1:len);
-% plot(x, i_battery);  
+plot(x, i_battery);  
 
 start_index = -1;
 end_index = -1;
@@ -53,6 +53,7 @@ SOC_init = 0.9;
 Ta = 35;
 num = 7; %number of batteries
 i_integration = 0;
+v_integration = 0;
 [R1,R2,R3,R4,R5,R6,R7] = deal(R*0.85,R*1,R*1.15,R*0.9,R*0.85,R*1.1,R*1);
 [R11,R12,R13,R14,R15,R16,R17] = deal(Re1*1.2,Re1*1.1,Re1*0.8,Re1*0.9,Re1*1.0,Re1*0.9,Re1*1.2);
 [C1,C2,C3,C4,C5,C6,C7] = deal(C1*1.1,C1*1.,C1*0.7,C1*0.9,C1*1.2,C1*1.,C1*1.1);
@@ -99,10 +100,10 @@ end
 Tc2 = lists.Tc1_list;
 
 for n=1:len
-    i_integration = i_integration + i_battery(n)*T;
     for i=1:num
         k = num2str(i);
         eval(['v' k  ' = (i_integration - v' k  '_integration/R1' k ') / C' k ' + v' k '_init;']);
+        i_integration = i_integration + i_battery(n)*T;
         eval(['v' k  '_integration = v' k '_integration + v' k '*T;']);
         eval(['SOC' k '_integration = SOC' k '_integration + i_battery(n)*T/(C*3600);']);
         eval(['SOC = SOC' k '_integration + lists.soc' k '_list(1);']);
@@ -110,7 +111,8 @@ for n=1:len
         eval(['lists.soc' k '_list(end+1) = SOC;']);
         eval(['lists.voc' k '_list(end+1) = voc;']);
         eval (['vo' k ' = voc + v' k ' + R' k '* i_battery(n);']);
-        eval(['Q = (vo' k ' - voc) * i_battery(n) + i_battery(n) * lists.Tc' k '_list(end) * Entrop(SOC);']);
+        %eval(['Q = (vo' k ' - voc) * i_battery(n) + i_battery(n) * lists.Tc' k '_list(end) * Entrop(SOC);']);
+        eval(['Q = i_battery(n)^2 * R' k ';']);
         eval(['lists.Q' k '_list(end+1) = Q;' ]);
         eval(['Tc_new = T/Cc * (Q - lists.Tc' k '_list(end)/Ri + lists.Ts' k '_list(end)/Ri + Cc/T*lists.Tc' k '_list(end));']);
         eval(['Ts_new = T/Cs * (lists.Tc' k '_list(end)/Ri +(Cs/T-1/Ri-1/Ro)*lists.Ts' k '_list(end) + Ta/Ro);']);

@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import EKF_Estimation
 import pandas as pd
+import datetime
 
 """
 Main Script - Handles the jacobians, Motion,Measurement Models,reading the data file and helper functions. 
@@ -16,19 +17,19 @@ Main Script - Handles the jacobians, Motion,Measurement Models,reading the data 
 
 srcData = "dataset_pack7_NewParam"
 Ta = 35
-nRe1 = 1 * 1e-1 * 0.85
-nRe2 = 1 * 1e-1 * 1
-nRe3 = 1 * 1e-1 * 1.15
-nRe4 = 1 * 1e-1 * 0.9
-nRe5 = 1 * 1e-1 * 0.85
-nRe6 = 1 * 1e-1 * 1.1
-nRe7 = 1 * 1e-1 * 1.0
+nRe1 = 5 * 1e-3 * 0.85
+nRe2 = 5 * 1e-3 * 1
+nRe3 = 5 * 1e-3 * 1.15
+nRe4 = 5 * 1e-3 * 0.9
+nRe5 = 5 * 1e-3 * 0.85
+nRe6 = 5 * 1e-3 * 1.1
+nRe7 = 5 * 1e-3 * 1.0
 nRe = [nRe1, nRe2, nRe3, nRe4, nRe5, nRe6, nRe7 ]
 df = pd.read_csv("./thermal model/Simulation_data/Q_values.csv")
 starttime = 1
 endtime = 25001
-dataframe = df.iloc[starttime:endtime, :].reset_index()
-Qv = dataframe[["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7"]].values
+dataframeQ = df.iloc[starttime:endtime, :].reset_index()
+Qv = dataframeQ[["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7"]].values
 nCc = 6.7 * 1e1
 nCs = 3.115 * 1e0
 nRc = 1.83 * 1e0
@@ -272,14 +273,13 @@ def data_initialization(QState, QParam, RState, PState, PParam):
     States_True = dataframe[["Tc1", "Ts1", "Tc2", "Ts2", "Tc3", "Ts3", "Tc4", "Ts4", "Tc5", "Ts5", "Tc6", "Ts6", "Tc7", "Ts7"]]
 
     state_init = np.array([[Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Ta, Cc_init, Cs_init, Rc_init, Ru_init, Rcc_init]])
-    #ibSquare = data_ib.reshape(1, -1) * data_ib.reshape(1, -1)
+    ibSquare = data_ib.reshape(1, -1) * data_ib.reshape(1, -1)
     Control = []
-    num = 7
     for i in range(len(data_t)):
         tmp = []
-        for n in range(num):
+        for n in range(len(nRe)):
             Re = nRe[n]
-            tmp.append([data_ib[i]**2*Re])
+            tmp.append([ibSquare[0, i]*Re])
             tmp.append([Ta])
         Control.append(np.array(tmp))
 
@@ -495,7 +495,9 @@ if __name__ == '__main__':
             + "RState" + "{:.0e}".format(RState) \
             + "PState" + "{:.0e}".format(PState) \
             + "RParam" + "{:.0e}".format(PParam) + '.txt'
+    current_datetime = datetime.datetime.now()
     with open(NAME, 'w') as f:  # 设置文件对象
+        f.write(current_datetime.strftime('%Y-%m-%d %H:%M:%S')+'\n')
         f.write(Ap)
 
 
