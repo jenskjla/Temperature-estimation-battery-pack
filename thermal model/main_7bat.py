@@ -86,8 +86,7 @@ def motion_model(control_input,x_k_1, delta_t, k):
 def jacobian_measurement_model(x_k_1):
 
 
-    H = np.array([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    H = np.array([[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]])
 
@@ -284,7 +283,7 @@ def data_initialization(QState, QParam, RState, PState, PParam):
         Control.append(np.array(tmp))
 
     Q = np.diag([QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QState, QParam, QParam, QParam, QParam, QParam])  # Intializing Process Noise Co-Variance Matrix
-    R = np.diag([RState, RState, RState, RState]) # Intializing Measurement Noise Co-Variance Matrix
+    R = np.diag([RState, RState, RState]) # Intializing Measurement Noise Co-Variance Matrix
 
     x_est = np.zeros([len(data_t), state_init.shape[1]])  # Initializing State Estimate Matrix
     x_est[0, :] = state_init
@@ -322,7 +321,7 @@ if __name__ == '__main__':
         # Prediction Step
         x_k_1,P_k_1= ekf.prediction_step(delta_t,controls[k],x_k_1,P_k_1,Q,jacobian_motion_model,motion_model, Qv, k)
 
-        x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts1", "Ts2", "Ts5", "Ts7"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
+        x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts2", "Ts5", "Ts7"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
         if Breakflag:
             break
 
@@ -412,7 +411,7 @@ if __name__ == '__main__':
             # Prediction Step
             x_k_1,P_k_1 = ekf.prediction_step(delta_t,controls[k],x_k_1,P_k_1,Q,jacobian_motion_model,motion_model, Qv, k)
 
-            x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts1", "Ts2", "Ts5", "Ts7"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
+            x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts2", "Ts5", "Ts7"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
             if Breakflag:
                 break
 
