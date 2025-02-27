@@ -41,9 +41,9 @@ for index, row in simulation_df.iterrows():
         num_samples = len(df)
         position = len(simulation_df) // num_samples
 
-        for i in range(1, num_samples+1):
+        for i in range(num_samples):
             if index == i * position:
-                simulation_data[battery_num][i] = {
+                simulation_data[battery_num][i+1] = {
                 "temperature": temperature,
                 }
 results = {}
@@ -55,8 +55,7 @@ for j in range(1, battery_num + 1):
         error = battery_real_data[j][i]["temperature"] - simulation_data[j][i]["temperature"]
         if error < 0:
             error = -error
-        error = error / battery_real_data[j][i]["temperature"]
-        error = f"{error * 100:.2f}%"
+        error = f"{error:.2f}ºC"
         results[j][i] = {"Error": error}    
 
 #Calculate the average R value for the circuit
@@ -67,17 +66,17 @@ for sample_num in range(1, num_samples + 1):
     for battery_num in range(1, 8):
         total_voltage += battery_real_data[battery_num][sample_num]["voltage"]
     voltages_samples.append(round(total_voltage, 2))
-print(voltages_samples)
 
-current = 1.5
+
+current = 1
 R = []
 for Vbatteries in voltages_samples:
     for power_supply in power_voltage:
         R.append((power_supply - Vbatteries) / current)
 
     # Calculate the average of R list values
-    average_R = sum(R) / len(R) if R else 0
-    print(f"Average R value: {average_R:.2f}")
+average_R = sum(R) / len(R) if R else 0
+print(f"Average R value: {average_R:.2f}")
     
 # Define the output file path
 output_file = "./Temperature-estimation-battery-pack/thermal model/error_percentages.csv"

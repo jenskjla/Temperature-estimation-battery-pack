@@ -23,6 +23,7 @@ nRe4 = 1 * 1e-1 * 0.9
 nRe5 = 1 * 1e-1 * 0.85
 nRe6 = 1 * 1e-1 * 1.1
 nRe7 = 1 * 1e-1 * 1.0
+nRe = [nRe1, nRe2, nRe3, nRe4, nRe5, nRe6, nRe7]
 df = pd.read_csv("./Temperature-estimation-battery-pack/thermal model/Simulation_data/Q_values.csv")
 starttime = 1
 endtime = 25001
@@ -277,7 +278,8 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
     for i in range(len(data_t)):
         tmp = []
         for n in range(num):
-            tmp.append([Qv[i,n]])
+            Qv = ibSquare[0][i] * nRe[n]
+            tmp.append([Qv])
             tmp.append([Ta])
         Control.append(np.array(tmp))
     

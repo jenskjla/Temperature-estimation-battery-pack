@@ -12,7 +12,7 @@ for i=1:len
     if carrier(i) <= modu
         A = [A, 0];
     else
-        A = [A, 5];
+        A = [A, 1];
     end
 end
 
@@ -45,12 +45,12 @@ Cc = 67;
 Cs = 1*3.115;
 Ri = 1.83;
 Ro = 4.03;
-R = 0.05;
+R = 0.1;
 Re1 = 1.3; 
 C1 = 500;  
 C = 3.0;
 SOC_init = 0.9;
-Ta = 35;
+Ta = 21.3;
 num = 7; %number of batteries
 i_integration = 0;
 v_integration = 0;
