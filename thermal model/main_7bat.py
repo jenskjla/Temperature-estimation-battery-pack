@@ -9,13 +9,16 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import EKF_Estimation
 import pandas as pd
+import os
+
+print("Working Directory: ", os.getcwd())
 
 """
 Main Script - Handles the jacobians, Motion,Measurement Models,reading the data file and helper functions. 
 """
 
-srcData = "dataset_pack7_NewParam"
-Ta = 35
+srcData = "targetWave"
+Ta = 21
 nRe1 = 1 * 1e-1 * 0.85
 nRe2 = 1 * 1e-1 * 1
 nRe3 = 1 * 1e-1 * 1.15
@@ -24,7 +27,7 @@ nRe5 = 1 * 1e-1 * 0.85
 nRe6 = 1 * 1e-1 * 1.1
 nRe7 = 1 * 1e-1 * 1.0
 nRe = [nRe1, nRe2, nRe3, nRe4, nRe5, nRe6, nRe7]
-df = pd.read_csv("./Temperature-estimation-battery-pack/thermal model/Simulation_data/Q_values.csv")
+df = pd.read_csv("./thermal model/Simulation_data/Q_values.csv")
 starttime = 1
 endtime = 25001
 dataframe = df.iloc[starttime:endtime, :].reset_index()
@@ -62,7 +65,7 @@ def motion_model(control_input,x_k_1, delta_t, k):
 
 
     B_matrix = np.array([[1/Cc, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                         [0, 1/(Cs*Ru), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #Change dimension of the matrix 14x14
+                         [0, 1/(Cs*Ru), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                          [0, 0, 1/Cc, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
                          [0, 0, 0, 1/(Cs*Ru), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                          [0, 0, 0, 0, 1/Cc, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
@@ -262,7 +265,7 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
     Rcc_init = nRcc * 1.5
     
 
-    df = pd.read_csv("./Temperature-estimation-battery-pack/thermal model/Simulation_data/" + srcData + ".csv")
+    df = pd.read_csv("./electrical_model/Simulation_data/" + srcData + ".csv")
     starttime = 1
     endtime = 25001
     dataframe = df.iloc[starttime:endtime, :].reset_index()
@@ -278,8 +281,9 @@ def data_initialization(QState, QParam, RState, PState, PParam, Qv):
     for i in range(len(data_t)):
         tmp = []
         for n in range(num):
-            Qv = ibSquare[0][i] * nRe[n]
-            tmp.append([Qv])
+            #Qv = ibSquare[0][i] * nRe[n]
+            Qvi = Qv[i][n]
+            tmp.append([Qvi])
             tmp.append([Ta])
         Control.append(np.array(tmp))
     
@@ -491,7 +495,7 @@ if __name__ == '__main__':
         # plt.plot(t, Tc2_pred)  # Tc1
         # plt.plot(t, Tc2_true)
         # plt.show()
-    NAME = './Temperature-estimation-battery-pack/thermal model/outptKF/Pcontinue_QState' + "{:.0e}".format(QState)  \
+    NAME = './thermal model/outptKF/Pcontinue_QState' + "{:.0e}".format(QState)  \
           + "QParam" + "{:.0e}".format(QParam) \
             + "RState" + "{:.0e}".format(RState) \
             + "PState" + "{:.0e}".format(PState) \

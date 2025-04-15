@@ -12,7 +12,7 @@ for i=1:len
     if carrier(i) <= modu
         A = [A, 0];
     else
-        A = [A, 1];
+        A = [A, 5];
     end
 end
 
@@ -43,14 +43,14 @@ end
 
 Cc = 67;
 Cs = 1*3.115;
-Ri = 1.83;
-Ro = 4.03;
+Rc = 1.83;
+Rs = 4.03;
 R = 0.1;
 Re1 = 1.3; 
 C1 = 500;  
 C = 3.0;
 SOC_init = 0.9;
-Ta = 21.3;
+Ta = 21;
 num = 7; %number of batteries
 i_integration = 0;
 v_integration = 0;
@@ -105,26 +105,21 @@ for n=1:len
         eval(['v' k  ' = (i_integration - v' k  '_integration/R1' k ') / C' k ' + v' k '_init;']);
         i_integration = i_integration + i_battery(n)*T;
         eval(['v' k  '_integration = v' k '_integration + v' k '*T;']);
-        eval(['SOC' k '_integration = SOC' k '_integration + i_battery(n)*T/(C*3600);']);
+        eval(['SOC' k '_integration = SOC' k '_integration + i_battery(n)*T/(C*3600)*0.98;']);
         eval(['SOC = SOC' k '_integration + lists.soc' k '_list(1);']);
         voc = soc_voc(SOC);
         eval(['lists.soc' k '_list(end+1) = SOC;']);
         eval(['lists.voc' k '_list(end+1) = voc;']);
         eval (['vo' k ' = voc + v' k ' + R' k '* i_battery(n);']);
-        %eval(['Q = (vo' k ' - voc) * i_battery(n) + i_battery(n) * lists.Tc' k '_list(end) * Entrop(SOC);']);
-        eval(['Q = i_battery(n)^2 * R' k ';']);
+        eval(['Q = (vo' k ' - voc) * i_battery(n) + i_battery(n) * lists.Tc' k '_list(end) * Entrop(SOC);']);
+        %eval(['Q = i_battery(n)^2 * R' k ';']);
         eval(['lists.Q' k '_list(end+1) = Q;' ]);
-        eval(['Tc_new = T/Cc * (Q - lists.Tc' k '_list(end)/Ri + lists.Ts' k '_list(end)/Ri + Cc/T*lists.Tc' k '_list(end));']);
-        eval(['Ts_new = T/Cs * (lists.Tc' k '_list(end)/Ri +(Cs/T-1/Ri-1/Ro)*lists.Ts' k '_list(end) + Ta/Ro);']);
+        eval(['Tc_new = T/Cc * (Q - lists.Tc' k '_list(end)/Rc + lists.Ts' k '_list(end)/Rc + Cc/T*lists.Tc' k '_list(end));']);
+        eval(['Ts_new = T/Cs * (lists.Tc' k '_list(end)/Rc +(Cs/T-1/Rc-1/Rs)*lists.Ts' k '_list(end) + Ta/Rs);']);
         eval(['lists.v' k '_list(end+1) = v' k ';'])
         eval(['lists.vo' k '_list(end+1) = vo' k ';']);
         eval(['lists.Tc' k '_list(end+1) = Tc_new;']);
         eval(['lists.Ts' k '_list(end+1) = Ts_new;']);
-    end
-    
-    
-    if i_battery(n)<0
-        ll=1;
     end
     
 end
@@ -169,6 +164,7 @@ A = [["t", "ib", "vb1", "Ts1", "Tc1", "soc1", "voc1", "vb2", "Ts2", "Tc2", "soc2
 
 writematrix(A, "./Simulation_data/targetWave.csv");
 save('Q_values.mat', "lists")
+
 
 function y = soc_voc(x)
     y = 0.824*x+3.347; 
