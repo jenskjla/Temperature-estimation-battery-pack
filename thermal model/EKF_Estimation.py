@@ -22,20 +22,15 @@ class EKF:
 		The Measurement Update Function Updates the predicted states using the Sensor Values and Kalman Gain.
 		
 		Parameters : 
-
-		l_k -> Global Position of Landmarks of lidar in both x and y directions - List - (2,). 
-		r_k -> Range  Readings of the lidar - float val.
-		b_k -> Bearing Readings of the lidar - float val.
-		P_k_1 -> Predicted Co-variance Matrix - Array - (3,3)
-		x_k_1 -> Predicted States Matrix - Array - (3,)
-		Q - Process Noise Co-Variance - Array - (2,2)
+		P_k_1 -> Predicted Co-variance Matrix - Array - (18,18)
+		x_k_1 -> Predicted States Matrix - Array - (18,1)
+		Q - Process Noise Co-Variance - Array - (18,18)
 		R - Measurement Noise Co-variance - Array - (2,2)
-		d - distance between robot center and lidar origin - float val
 		jacobian - Function that computes the measurement jacobians (Both Noise and Last State) - Function
 
 		Returns : 
-		x_k - Corrected State - Array - (3,)
-		P_k - Corrected Covariance - Array - (3,)
+		x_k - Corrected State - Array - (18,1)
+		P_k - Corrected Covariance - Array - (18,18)
 
 		"""
 
@@ -45,10 +40,8 @@ class EKF:
 		H_k,M_k,y_out = jacobian(x_k_1)
 
 		"""
-		H_k - Jacobian w.r.t last state - Array - (2,3).
+		H_k - Jacobian w.r.t last state - Array - (2,18).
 		M_k - Jacobian w.r.t noise - Array - (2,2).
-		r - Distance (Range) - float val.
-		phi - Heading - float val.
 		"""
 		
 		# Calculation of Kalman Gain
@@ -84,24 +77,22 @@ class EKF:
 		
 		Parameters : 
 
-		delta_t -> Time Period - float val 
-		v -> Previous Linear Velocity - float val 
-		om -> Previous Angular Velocity - float val 
-		x_k_1 -> Current State - Array - (3,)
-		P_k_1 -> Current Covariance - Array - (3,3)
+		delta_t -> Time Period - float val  
+		x_k_1 -> Current State - Array - (18,1)
+		P_k_1 -> Current Covariance - Array - (18,18)
 		jacobian -> Function that computes the process jacobians (Both Noise and Last State) - Function
 		motion_model -> Function that computes the output states for a given input states - Function 
 
 		Returns : 
-		x_k_1 : Predicted States - Array - (3,)
-		P_k_1 : Predicted states - Array - (3,3)
+		x_k_1 : Predicted States - Array - (18,1)
+		P_k_1 : Predicted states - Array - (18,18)
 
 		"""
 		# Jacobian of Motion Model w.r.t last state and Noise
 		F, L = jacobian(x_k_1, ControlSet[0], delta_t, Qv, k)
 
 		# Motion Model Returns the states [x,y,theta]
-		x_k_1 = motion_model(ControlSet,x_k_1,delta_t, k)
+		x_k_1 = motion_model(ControlSet,x_k_1,delta_t, Qv, k)
 
 		# Predicted Co-Variance
 		P_k_1 = F.dot((P_k_1).dot(F.T)) + Q
