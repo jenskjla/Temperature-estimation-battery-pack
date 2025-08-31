@@ -7,13 +7,13 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-df = pd.read_excel("./thermal model/Dataset_experiment_1A.xlsx")
+df = pd.read_excel("./thermal model/Dataset_experimentation.xlsx")
 
 battery_real_data = {}
 power_voltage = []
 nBatt = 7
 for index, row in df.iterrows():
-    for battery_num in range(nBatt): 
+    for battery_num in range(1, nBatt + 1): 
         if battery_num not in battery_real_data:
             battery_real_data[battery_num] = {}
         
@@ -25,11 +25,11 @@ for index, row in df.iterrows():
         }
 
 simulation_data = {}
-simulation_df = pd.read_csv("./electrical_model/Simulation_data/targetWave.csv")
+simulation_df = pd.read_csv("./electrical_model/Simulation_data/targetWave_elec.csv")
 
 
 for index, row in simulation_df.iterrows():
-    for battery_num in range(nBatt):  
+    for battery_num in range(1, nBatt + 1):  
         if battery_num not in simulation_data:
             simulation_data[battery_num] = {}
         
@@ -49,7 +49,7 @@ for index, row in simulation_df.iterrows():
         simulation_data[battery_num][len(simulation_df)-1] = {"temperature": simulation_df.iloc[len(simulation_df)-1][f'Ts{battery_num}']}
         
 results = {}
-for j in range(1, battery_num + 1):
+for j in range(1, nBatt + 1):
     results[j] = {}
     for i in range(num_samples):
         error = battery_real_data[j][i+1]["temperature"] - simulation_data[j][i*position]["temperature"]
@@ -65,7 +65,7 @@ for j in range(1, battery_num + 1):
 
     
 # Output file path
-output_file = "./thermal model/error_percentages_1A.csv"
+output_file = "./thermal model/Data_experiment/error_percentages.csv"
 
 
 os.makedirs(os.path.dirname(output_file), exist_ok=True)
