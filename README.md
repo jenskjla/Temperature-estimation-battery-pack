@@ -86,7 +86,7 @@ The objective was to verify that the **simulated surface temperatures** align cl
 The following figure compares the **simulated vs. experimental surface temperature** for one of the seven cells (Battery 1). The simulation accurately follows the experimental trend, capturing both transient and steady-state behavior.
 
 <p align="center">
-  <img src="a187910b-d43f-4906-8769-14b3df2ab9aa.png" width="600"/>
+   <img src="images/graph_simulation.png" width="400"/>
 </p>
 
 **Figure 1 — Battery 1: Simulated Ts1 vs Experimental Ts1**
@@ -100,16 +100,18 @@ The simulation reproduced the physical heating profile with a deviation **below 
 To evaluate accuracy quantitatively, the **percentage deviation between simulated and experimental final surface temperatures** was computed as:
 
 <p align="center">
-  <img src="b335357b-0191-4246-8707-97b8d70c2334.png" width="480"/>
+   <img src="images/error_simulation.png" width="400"/>
 </p>
+
+**Figure 2 — Error equation for simulation performance**
 
 The results are shown below for all seven cells.
 
 <p align="center">
-  <img src="272ad1da-9aaa-4d87-a75f-d8dd0e08d65c.png" width="450"/>
+   <img src="images/results_simulation.png" width="400"/>
 </p>
 
-**Figure 2 — Cell-wise temperature error and average pack deviation**
+**Figure 3 — Cell-wise temperature error and average pack deviation**
 
 | Cell | Error (%) |
 |:----:|:----------:|
@@ -161,10 +163,10 @@ The next figure shows the estimated and simulated temperature evolution for one 
 The EKF accurately reconstructs both **core** (`T꜀`) and **surface** (`Tₛ`) temperatures even with minimal sensor input.
 
 <p align="center">
-  <img src="c7d41a8c-b9b7-4605-92da-2e7e813b72c2.png" width="500"/>
+   <img src="images/graph_ekf.png" width="400"/>
 </p>
 
-**Figure 3 — Temperature estimation vs simulation**  
+**Figure 4 — Temperature estimation vs simulation**  
 Blue: `T꜀⁽ᵉˢᵗ⁾`, Red: `Tₛ⁽ᵉˢᵗ⁾`, Yellow: `T꜀⁽ˢⁱᵐ⁾`, Green: `Tₛ⁽ˢⁱᵐ⁾`
 
 The estimated surface temperature (`Tₛ⁽ᵉˢᵗ⁾`) follows the simulated value nearly perfectly (error < 0.15 °C), while the core-temperature estimate remains within ±1 °C across the full charge cycle.
@@ -176,18 +178,18 @@ The estimated surface temperature (`Tₛ⁽ᵉˢᵗ⁾`) follows the simulated v
 The mean absolute error between simulated (`Tₛ⁽ˢⁱᵐ⁾`, `T꜀⁽ˢⁱᵐ⁾`) and estimated (`Tₛ⁽ᵉˢᵗ⁾`, `T꜀⁽ᵉˢᵗ⁾`) temperatures is defined as:
 
 <p align="center">
-  <img src="70c923fa-f371-48fe-aa64-ef5096e895c9.png" width="380"/>
+   <img src="images/mae_ekf.png" width="400"/>
 </p>
 
-**Figure 4 — MAE definition for surface temperature estimation**
+**Figure 5 — MAE definition for surface temperature estimation**
 
 The table below summarizes the mean surface and core temperature errors for all non-instrumented cells.
 
 <p align="center">
-  <img src="b335357b-0191-4246-8707-97b8d70c2334.png" width="700"/>
+   <img src="images/error_ekf.png" width="400"/>
 </p>
 
-**Figure 5 — EKF two-sensor configuration, physical setup and MAE results**
+**Figure 6 — EKF two-sensor configuration, physical setup and MAE results**
 
 | Cell | Surface Error (°C) | Core Error (°C) |
 |:----:|:------------------:|:----------------:|
@@ -225,3 +227,41 @@ However, **core-temperature estimation does not yet reach the same accuracy**. W
 - **Experimental factors** (sensor latency/placement, emissivity assumptions for references) that propagate as bias in identification.
 
 **Implication.** While the reduced-sensor EKF is sufficient for **surface** monitoring and early thermal-runaway prevention, **core temperature** requires further refinement before deployment as a safety-critical signal.
+
+---
+
+## 🖼️ How to Add Images in a README File
+
+To include images in your README, use standard Markdown syntax:
+
+```markdown
+![Alt text](path/to/image.png)
+```
+
+- **Alt text**: Description for accessibility and when the image can't be displayed.
+- **path/to/image.png**: Relative or absolute path, or a URL.
+
+**Examples:**
+
+- Local image:
+   ```markdown
+   ![Battery Pack Diagram](images/battery-pack.png)
+   ```
+- Remote image:
+   ```markdown
+   ![Logo](https://example.com/logo.png)
+   ```
+
+You can also control the image size using HTML:
+
+```html
+<img src="images/battery-pack.png" width="400"/>
+```
+
+For centering images, wrap them in a `<p align="center">` block:
+
+```html
+<p align="center">
+   <img src="images/battery-pack.png" width="400"/>
+</p>
+```
