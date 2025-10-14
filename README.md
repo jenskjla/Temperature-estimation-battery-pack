@@ -167,7 +167,6 @@ The EKF accurately reconstructs both **core** (`T꜀`) and **surface** (`Tₛ`) 
 </p>
 
 **Figure 4 — Temperature estimation vs simulation**  
-Blue: `T꜀⁽ᵉˢᵗ⁾`, Red: `Tₛ⁽ᵉˢᵗ⁾`, Yellow: `T꜀⁽ˢⁱᵐ⁾`, Green: `Tₛ⁽ˢⁱᵐ⁾`
 
 The estimated surface temperature (`Tₛ⁽ᵉˢᵗ⁾`) follows the simulated value nearly perfectly (error < 0.15 °C), while the core-temperature estimate remains within ±1 °C across the full charge cycle.
 
@@ -186,18 +185,10 @@ The mean absolute error between simulated (`Tₛ⁽ˢⁱᵐ⁾`, `T꜀⁽ˢⁱ�
 The table below summarizes the mean surface and core temperature errors for all non-instrumented cells.
 
 <p align="center">
-   <img src="images/error_ekf.png" width="400"/>
+   <img src="images/Error_ekf.png" width="400"/>
 </p>
 
 **Figure 6 — EKF two-sensor configuration, physical setup and MAE results**
-
-| Cell | Surface Error (°C) | Core Error (°C) |
-|:----:|:------------------:|:----------------:|
-| 2 | 0.118 | 0.754 |
-| 3 | 0.118 | 0.705 |
-| 4 | 0.113 | 0.698 |
-| 6 | 0.109 | 0.689 |
-| 7 | 0.117 | 0.753 |
 
 Average MAE: **Tₛ ≈ 0.115 °C**, **T꜀ ≈ 0.72 °C**
 
