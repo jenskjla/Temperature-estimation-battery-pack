@@ -80,7 +80,7 @@ def jacobian_measurement_model(x_k_1):
 
 
     H = np.array([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]])
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]])
 
     M = np.identity(2)
 
@@ -198,7 +198,6 @@ def data_initialization(QState, QParam, RState, PState, PParam):
     x_est = np.zeros([len(data_t), state_init.shape[1]])  # Initializing State Estimate Matrix
     x_est[0, :] = state_init
     P_est = np.zeros([len(data_t), state_init.shape[1], state_init.shape[1]])  # Initializing Co-Variance Matrix
-    # P_est[0] = np.eye(state_init.shape[1])*6e-4
     P_est[0] = np.diag([PState, PState, PState, PState, PState, PState, PState, PState, PState, PState, PState, PState, PState, PState, PParam, PParam, PParam, PParam])
 
     return Control, data_t, Q, R, x_est, P_est, States_True
@@ -319,7 +318,7 @@ if __name__ == '__main__':
                             # Prediction Step
                             x_k_1,P_k_1 = ekf.prediction_step(delta_t,controls[k],x_k_1,P_k_1,Q,jacobian_motion_model,motion_model, Qv, k)
 
-                            x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts1", "Ts5"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
+                            x_k_1,P_k_1, Breakflag = ekf.measurement_update(States_True[["Ts1","Ts5"]].values[k, :],P_k_1,x_k_1,Q,R,jacobian_measurement_model)
                             if Breakflag:
                                 break
 
@@ -389,7 +388,10 @@ if __name__ == '__main__':
                             % (generation, Tc1Error, Ts1Error, Tc2Error, Ts2Error, Tc3Error, Ts3Error, Tc4Error, Ts4Error, Tc5Error, Ts5Error, Tc6Error, Ts6Error, Tc7Error, Ts7Error, CcError, CsError, RcError, RuError, meanError, Trace))
                         Ap += 'Iterations: %d, Tc1Error: %.3f, Ts1Error: %.0f, Tc2Error: %.3f, Ts2Error: %.0f, Tc3Error: %.3f, Ts3Error: %.3f, Tc4Error: %.3f, Ts4Error: %.3f, Tc5Error: %.3f, Ts5Error: %.3f, Tc6Error: %.3f, Ts6Error: %.0f, Tc7Error: %.3f, Ts7Error: %.0f, CcError: %.1f%%, CsError: %.1f%%, RcError: %.1f%%, RuError: %.1f%%, MeanError: %.3f, Trace: %.3f' % (
                             generation, Tc1Error, Ts1Error, Tc2Error, Ts2Error, Tc3Error, Ts3Error, Tc4Error, Ts4Error, Tc5Error, Ts5Error, Tc6Error, Ts6Error, Tc7Error, Ts7Error, CcError, CsError, RcError, RuError, meanError, Trace) + "\n"
-
+                    print("Last value of States_True['Ts2']:", States_True["Ts2"].values[-1])
+                    print("Last value of States_True['Tc2']:", States_True["Tc2"].values[-1])
+                    print("Last value of x_est[-1,2]:", x_est[-1, 2])
+                    print("Last value of x_est[-1,3]:", x_est[-1, 3])
                     k_vec = np.arange(k+1)
                     plt.plot(k_vec, Ts4_pred, c='g')  # Ts4 predicted
                     plt.plot(k_vec, Ts4_true, c='r')  # Ts4 true

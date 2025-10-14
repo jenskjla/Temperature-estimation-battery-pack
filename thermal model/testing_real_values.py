@@ -96,8 +96,8 @@ with open(output_file, mode='w', newline='') as file:
         writer.writerow(row)    
         
 
-sim_ts = simulation_df['Ts7'].values
-exp_ts = df['T7'].values
+sim_ts = simulation_df['Ts1'].values
+exp_ts = df['T1'].values
 
 
 total_sim = len(sim_ts)       
@@ -106,11 +106,11 @@ sim_x = np.arange(1, total_sim + 1)
 exp_x = (total_sim / N_exp) * np.arange(1, N_exp + 1)
 
 plt.figure(figsize=(10, 6))
-plt.plot(sim_x, sim_ts, label='Simulated Ts7', linestyle='-')
-plt.scatter(exp_x, exp_ts, s=50, label='Experimental Ts7', zorder=5)
+plt.plot(sim_x, sim_ts, label='Simulated Ts1', linestyle='-')
+plt.scatter(exp_x, exp_ts, s=50, label='Experimental Ts1', zorder=5)
 plt.xlabel('Sample Number')
 plt.ylabel('Temperature (°C)')
-plt.title('Battery 7: Simulated Ts7 vs. Experimental Ts7')
+plt.title('Battery 1: Simulated Ts1 vs. Experimental Ts1')
 plt.legend()
 plt.tight_layout()
 plt.show()
