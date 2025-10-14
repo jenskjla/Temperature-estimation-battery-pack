@@ -52,17 +52,17 @@ To emulate the **charging behavior of an EV battery module** at a smaller scale,
 - Ambient temperature is held constant (isothermal chamber assumption) unless otherwise specified.
 
 **Input & Termination**
-- A **constant pack current** \( I_{\text{chg}} \) is applied.
-- The simulation **stops when the first cell** reaches its **full-charge condition** (e.g., \( V_{\text{cell}} \ge V_{\text{max}} \) or SOC = 100%).  
+- A **constant pack current I**  is applied.
+- The simulation **stops when the first cell** reaches its **approximately full-charge condition SOC=0.95**  
   This reproduces **EV-relevant pack limits**, where the **weakest/fastest cell** dictates the pack-level stop criterion.
 
 **Measurements & Online Monitoring**
 - **Measured/available signals:** pack current, per-cell voltages (if available), and **surface temperatures** on a **subset of cells** (reduced sensors).
-- The **EKF** runs **online** during the charge process to estimate **core** and **surface** temperatures per cell \( T_{\text{core},i}, T_{\text{surf},i} \), fusing electrical and thermal states.
-- **Health/safety monitoring:** the observer flags abnormal trends (e.g., excessive \( \Delta T \), rising thermal gradients, or divergence between estimated and measured surface temps) to emulate BMS-style supervision.
+- The **EKF** runs **online** during the charge process to estimate **core** and **surface** temperatures per cell Tc, Ts, fusing electrical and thermal states.
+- **Health/safety monitoring:** the observer flags abnormal trends (e.g., excessive , rising thermal gradients, or divergence between estimated and measured surface temps) to emulate BMS-style supervision.
 
 **Outputs & What We Track**
-- **Time-to-first-cell-full**, **SOC spread** across cells, thermal rise \( \Delta T \) per cell, and **estimation errors** (RMSE/MAE vs measured surfaces).
+- **Time-to-first-cell-full**, **SOC spread** across cells, thermal rise  per cell, and **estimation errors** (RMSE/MAE vs measured surfaces).
 - This scenario highlights **cell imbalance under CC charge**, a common EV phenomenon, and demonstrates that **accurate temperature observability** can be achieved with **fewer physical sensors** by leveraging the model + EKF.
 
 > Reproduction: generate/prepare input CSVs via MATLAB (electrical/thermal scripts), then execute the Python observers (see **Installation & Usage**). The termination condition and current level can be changed to explore different operational envelopes.
@@ -99,9 +99,9 @@ The simulation reproduced the physical heating profile with a deviation **below 
 
 To evaluate accuracy quantitatively, the **percentage deviation between simulated and experimental final surface temperatures** was computed as:
 
-\[
-Error (\%) = \frac{T_{exp,final} - T_{sim,final}}{T_{exp,final}} \times 100
-\]
+<p align="center">
+  <img src="b335357b-0191-4246-8707-97b8d70c2334.png" width="480"/>
+</p>
 
 The results are shown below for all seven cells.
 
@@ -135,7 +135,7 @@ The **mean surface-temperature deviation = 1.44 %**, confirming that the thermal
 
 ---
 
-### 🔹 4.3 EKF Temperature Estimation (Two-Sensor Configuration)
+### 🔹 EKF Temperature Estimation (Two-Sensor Configuration)
 
 To validate the **Extended Kalman Filter (EKF)** implementation, several scenarios were simulated using the electro-thermal model as the reference.  
 Here, the most constrained configuration is analyzed: **only two surface sensors** (cells 1 and 5) provide real-time temperature measurements, while the EKF estimates the surface and core temperatures for the remaining five cells.
@@ -150,12 +150,6 @@ The EKF fuses:
 - **Measured states:** surface temperatures of cells 1 and 5 (`Tₛ,meas`)
 - **Predicted states:** core and surface temperatures of all other cells (`T꜀,est`, `Tₛ,est`)
 - **Model equations:** the coupled thermal network  
-  \[
-  \begin{cases}
-  \dot{T_c} = \frac{T_s - T_c}{R_c C_c} + \frac{Q}{C_c} \\
-  \dot{T_s} = \frac{T_c}{R_c C_s} - T_s\left(\frac{1}{R_c C_s}+\frac{1}{R_s C_s}\right) + \frac{T_a}{R_s C_s}
-  \end{cases}
-  \]
 
 At every iteration, the EKF performs a **prediction step** using these equations and a **correction step** when new surface-temperature data arrives from the two instrumented cells.
 
@@ -181,17 +175,19 @@ The estimated surface temperature (`Tₛ⁽ᵉˢᵗ⁾`) follows the simulated v
 
 The mean absolute error between simulated (`Tₛ⁽ˢⁱᵐ⁾`, `T꜀⁽ˢⁱᵐ⁾`) and estimated (`Tₛ⁽ᵉˢᵗ⁾`, `T꜀⁽ᵉˢᵗ⁾`) temperatures is defined as:
 
-\[
-MAE = \frac{1}{N}\sum_{k=1}^{N} \left|T_S^{est}(k) - T_S^{sim}(k)\right|
-\]
+<p align="center">
+  <img src="70c923fa-f371-48fe-aa64-ef5096e895c9.png" width="380"/>
+</p>
 
-The following figure shows the experimental setup of the 7-cell pack and the computed MAE values for each cell.
+**Figure 4 — MAE definition for surface temperature estimation**
+
+The table below summarizes the mean surface and core temperature errors for all non-instrumented cells.
 
 <p align="center">
   <img src="b335357b-0191-4246-8707-97b8d70c2334.png" width="700"/>
 </p>
 
-**Figure 4 — EKF two-sensor configuration, cell mapping and MAE results**
+**Figure 5 — EKF two-sensor configuration, physical setup and MAE results**
 
 | Cell | Surface Error (°C) | Core Error (°C) |
 |:----:|:------------------:|:----------------:|
